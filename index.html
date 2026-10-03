@@ -72,8 +72,7 @@
   </div>
   <div class="spec">
     <b>Gardırop</b> 220 × 250 × 58 cm · 5 düz kapak<br>
-    <b>Komodin ×2</b> 50 × 55 × 42 cm · 3 çekmece<br>
-    <b>Şifonyer</b> üst 2 çekmece önü yenilenir
+    <b>Komodin ×2</b> 50 × 55 × 42 cm · 3 çekmece
   </div>
   <div class="note">Yerleşim müşterinin krokisine göre yapıldı; oda ölçüleri tahminidir. Renkler numuneye göre değişir.</div>
 </div>
@@ -1220,7 +1219,6 @@ function box(parent, x0, y0, z0, w, h, d, mat = mBody, edges = true, shadow = tr
 const RH = 2700, WT = 100;
 const X0 = -2600, XS = -1000, X1 = 2600, Z0 = -1500, ZD = -2850, Z1 = 1500;
 const RW = X1 - X0, RD = Z1 - Z0;
-const SIF_X1 = 2480;                  // şifonyer: ayak ucu duvarında, sağ köşede
 const BX = 500;                       // yatak ekseni
 const BW = 1800, BL = 2000;           // yatak ölçüsü (şilte)
 
@@ -1324,12 +1322,6 @@ makeWall('on', [0, 0, -1], [0, 0, mm(Z1)], g => {
   noShadow(box(g, X0 - WT, 0, Z1, X1 - X0 + 2 * WT, RH, WT, mWall, false));
   box(g, X0, 0, Z1 - 12, X1 - X0, 80, 12, mWhite, false, false);
   windowFront(g, -1850, -1200);   // gardırobun solu, yan duvarda
-  // ayna (şifonyerin üstü)
-  const mx = SIF_X1 - 390;
-  const mir = new THREE.Mesh(new THREE.CircleGeometry(mm(330), 48), M(0xdfe7ec, { metalness: 0.9, roughness: 0.08 }));
-  mir.rotation.y = Math.PI; mir.position.set(mm(mx), mm(1600), mm(Z1 - 14)); g.add(mir);
-  const ring = new THREE.Mesh(new THREE.TorusGeometry(mm(335), mm(10), 8, 48), mWood);
-  ring.rotation.y = Math.PI; ring.position.set(mm(mx), mm(1600), mm(Z1 - 14)); g.add(ring);
 });
 makeWall('sag', [-1, 0, 0], [mm(X1), 0, 0], g => {
   noShadow(box(g, X1, 0, Z0 - WT, WT, RH, Z1 - Z0 + 2 * WT, mWall, false));
@@ -1530,32 +1522,6 @@ komodin(BX + BW / 2 + 50);
   box(g, 80, 1480, Z0 + 30, 540, 740, 4, mArt2, false, false);
 })();
 
-// ---------------- Şifonyer (mevcut, üst 2 ön yeni) ----------------
-(function sifonyer() {
-  const root = new THREE.Group(); root.rotation.y = Math.PI;
-  const SWW = 780, SDD = 450;
-  root.position.set(mm(SIF_X1), 0, mm(Z1 - SDD - 5)); scene.add(root);
-  box(root, 0, 0, -SDD, 18, 900, SDD);
-  box(root, SWW - 18, 0, -SDD, 18, 900, SDD);
-  box(root, 0, 900, -SDD, SWW, 18, SDD + 10);
-  box(root, 18, 0, -SDD, SWW - 36, 60, 18);
-  box(root, 0, 0, -SDD, SWW, 900, 8, mBack, false);
-  const heights = [180, 180, 180, 166, 116];
-  let y = 63;
-  heights.forEach((h, i) => {
-    const dg = new THREE.Group(); root.add(dg);
-    const isNew = i >= 3;
-    box(dg, 22, y, 0, 736, h, 20, isNew ? mBody : M(0xd2cbbf, { roughness: 0.65 }));
-    box(dg, 40, y + 20, -400, SWW - 80, h - 40, 400, mInner);
-    const bar = new THREE.Mesh(new THREE.CylinderGeometry(mm(6), mm(6), mm(128), 16), mMetal);
-    bar.rotation.z = Math.PI / 2; bar.position.set(mm(SWW / 2), mm(y + h / 2), mm(46)); dg.add(bar);
-    drawers.push({ g: dg, max: mm(isNew ? 300 : 0), d: i });
-    y += h + 3;
-  });
-  // üstünde vazo
-  const v = new THREE.Mesh(new THREE.CylinderGeometry(mm(60), mm(45), mm(240), 24), M(0x7f8c86, { roughness: 0.4 }));
-  v.position.set(mm(160), mm(918 + 120), mm(-220)); v.castShadow = true; root.add(v);
-})();
 
 // ---------------- Görünümler ----------------
 const views = {
