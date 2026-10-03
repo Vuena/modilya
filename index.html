@@ -71,7 +71,7 @@
     <button data-v="ust">Üstten</button>
   </div>
   <div class="spec">
-    <b>Gardırop</b> 220 × 250 × 58 cm · 4 göbekli kapak<br>
+    <b>Gardırop</b> 220 × 250 × 58 cm · 5 düz kapak<br>
     <b>Komodin ×2</b> 50 × 55 × 42 cm · 3 çekmece<br>
     <b>Şifonyer</b> üst 2 çekmece önü yenilenir
   </div>
@@ -1283,24 +1283,24 @@ function doorZ(g, zWall, xc, w = 850, h = 2100) {
   const kn = new THREE.Mesh(new THREE.CylinderGeometry(mm(9), mm(9), mm(130), 12), mMetal);
   kn.rotation.z = Math.PI / 2; kn.position.set(mm(x0 + w - 140), mm(1020), mm(zWall + 75)); g.add(kn);
 }
-// tek kanatlı pencere, sol duvarda (odaya +x yönünde bakar)
-function windowLeft(g, wz0, wz1, wy0 = 950, wy1 = 2250, fr = 60) {
-  box(g, X0, wy0, wz0, 30, wy1 - wy0, wz1 - wz0, mGlass, false, false);
-  box(g, X0, wy0 - fr, wz0 - fr, 60, fr, wz1 - wz0 + 2 * fr, mWhite, true, false);
-  box(g, X0, wy1, wz0 - fr, 60, fr, wz1 - wz0 + 2 * fr, mWhite, true, false);
-  box(g, X0, wy0, wz0 - fr, 60, wy1 - wy0, fr, mWhite, true, false);
-  box(g, X0, wy0, wz1, 60, wy1 - wy0, fr, mWhite, true, false);
-  box(g, X0, wy0 - fr - 25, wz0 - 120, 140, 25, wz1 - wz0 + 240, mWhite, true, false);   // denizlik
-  box(g, X0 + 60, (wy0 + wy1) / 2 - 60, wz1 - 40, 25, 120, 18, mMetal, false, false);    // pencere kolu
-  const rod = new THREE.Mesh(new THREE.CylinderGeometry(mm(12), mm(12), mm(wz1 - wz0 + 360), 12), mMetal);
-  rod.rotation.x = Math.PI / 2; rod.position.set(mm(X0 + 120), mm(2430), mm((wz0 + wz1) / 2 - 120)); g.add(rod);
-  const a = wz0 - 260, b = wz0 - 30;                                                      // tek perde, kapı tarafında
+// tek kanatlı pencere, ayak ucu (ön) duvarında; odaya -z yönünde bakar
+function windowFront(g, wx0, wx1, wy0 = 950, wy1 = 2250, fr = 60) {
+  box(g, wx0, wy0, Z1 - 30, wx1 - wx0, wy1 - wy0, 30, mGlass, false, false);
+  box(g, wx0 - fr, wy0 - fr, Z1 - 60, wx1 - wx0 + 2 * fr, fr, 60, mWhite, true, false);
+  box(g, wx0 - fr, wy1, Z1 - 60, wx1 - wx0 + 2 * fr, fr, 60, mWhite, true, false);
+  box(g, wx0 - fr, wy0, Z1 - 60, fr, wy1 - wy0, 60, mWhite, true, false);
+  box(g, wx1, wy0, Z1 - 60, fr, wy1 - wy0, 60, mWhite, true, false);
+  box(g, wx0 - 120, wy0 - fr - 25, Z1 - 140, wx1 - wx0 + 240, 25, 140, mWhite, true, false);   // denizlik
+  box(g, wx1 - 40, (wy0 + wy1) / 2 - 60, Z1 - 85, 18, 120, 25, mMetal, false, false);          // pencere kolu
+  const rod = new THREE.Mesh(new THREE.CylinderGeometry(mm(12), mm(12), mm(wx1 - wx0 + 360), 12), mMetal);
+  rod.rotation.z = Math.PI / 2; rod.position.set(mm((wx0 + wx1) / 2 + 120), mm(2430), mm(Z1 - 120)); g.add(rod);
+  const a = wx1 + 30, b = wx1 + 260;                                                            // tek perde, gardırobun karşı tarafında
   const geo = new THREE.PlaneGeometry(mm(b - a), mm(2390), 20, 1);
   const pos = geo.attributes.position;
   for (let i = 0; i < pos.count; i++) pos.setZ(i, Math.sin(pos.getX(i) * 55) * 0.025);
   geo.computeVertexNormals();
   const cm = new THREE.Mesh(geo, mCurtain);
-  cm.rotation.y = Math.PI / 2; cm.position.set(mm(X0 + 120), mm(1215), mm((a + b) / 2));
+  cm.rotation.y = Math.PI; cm.position.set(mm((a + b) / 2), mm(1215), mm(Z1 - 120));
   cm.castShadow = true; cm.receiveShadow = true; g.add(cm);
 }
 const backWall = makeWall('arka', [0, 0, 1], [0, 0, mm(Z0)], g => {
@@ -1319,11 +1319,11 @@ makeWall('koridor-yan', [-1, 0, 0], [mm(XS), 0, 0], g => {
 makeWall('sol', [1, 0, 0], [mm(X0), 0, 0], g => {
   noShadow(box(g, X0 - WT, 0, ZD - WT, WT, RH, Z1 - ZD + 2 * WT, mWall, false));
   box(g, X0, 0, ZD, 12, 80, Z1 - ZD, mWhite, false, false);
-  windowLeft(g, -1950, -1250);   // gardırobun sağı
 });
 makeWall('on', [0, 0, -1], [0, 0, mm(Z1)], g => {
   noShadow(box(g, X0 - WT, 0, Z1, X1 - X0 + 2 * WT, RH, WT, mWall, false));
   box(g, X0, 0, Z1 - 12, X1 - X0, 80, 12, mWhite, false, false);
+  windowFront(g, -1850, -1200);   // gardırobun solu, yan duvarda
   // ayna (şifonyerin üstü)
   const mx = SIF_X1 - 390;
   const mir = new THREE.Mesh(new THREE.CircleGeometry(mm(330), 48), M(0xdfe7ec, { metalness: 0.9, roughness: 0.08 }));
@@ -1356,25 +1356,21 @@ makeWall('sag', [-1, 0, 0], [mm(X1), 0, 0], g => {
   });
 });
 
-// ---------------- Gardırop ----------------
+// ---------------- Gardırop: 5 düz kapak, 2 + 1 + 2 ----------------
 const H = 2500, W = 2200, D = 560, T = 18, AT = 8, B = 100, DY = D - AT;
-const IW = (W - 3 * T) / 2, DOL = 18, DOLG = 80, R = 13, GRAY = 450;
-const DBW = IW - 2 * DOL - 2 * R;
+const NK = 5, G = 3, DOOR_W = Math.floor((W - (NK - 1) * G) / NK * 10) / 10, DOOR_H = H - B - G;   // 437,6 × 2397
+const IWA = 2 * DOOR_W + 1.5 * G - 1.5 * T;          // yan bölmeler (2 kapak) 852,7
+const IWB = W - 4 * T - 2 * IWA;                     // orta bölme (1 kapak) 422,6
+const DOL = 18, DOLG = 80, R = 13, GRAY = 450;
+const DBW = IWA - 2 * DOL - 2 * R;
 const Z_ALT = B + T, Z_RAF = Z_ALT + 780, Z_YUK_ALT = H - T - 400 - T, ROD = Z_YUK_ALT - 50;
-const DOOR_W = 547.7, G = 3, DOOR_H = H - B - G;
 const drawers = [], doors = [];
 
-function goebekDoor(leftHinge) {
+function flatDoor(leftHinge) {
   const pivot = new THREE.Group();
-  const x0 = leftHinge ? 0 : -DOOR_W, F = 70, TH = 20;
-  box(pivot, x0, 0, 0, F, DOOR_H, TH);
-  box(pivot, x0 + DOOR_W - F, 0, 0, F, DOOR_H, TH);
-  box(pivot, x0 + F, 0, 0, DOOR_W - 2 * F, F, TH);
-  box(pivot, x0 + F, DOOR_H - F, 0, DOOR_W - 2 * F, F, TH);
-  box(pivot, x0 + F, DOOR_H / 2 - F / 2, 0, DOOR_W - 2 * F, F, TH);
-  box(pivot, x0 + F, F, 3, DOOR_W - 2 * F, DOOR_H / 2 - 1.5 * F, 12, mPanel);
-  box(pivot, x0 + F, DOOR_H / 2 + F / 2, 3, DOOR_W - 2 * F, DOOR_H / 2 - 1.5 * F, 12, mPanel);
-  const hx = leftHinge ? x0 + DOOR_W - F / 2 : x0 + F / 2;
+  const x0 = leftHinge ? 0 : -DOOR_W, TH = T;
+  box(pivot, x0, 0, 0, DOOR_W, DOOR_H, TH);
+  const hx = leftHinge ? x0 + DOOR_W - 40 : x0 + 40;          // kulp serbest kenarda, orta yükseklikte
   const bar = new THREE.Mesh(new THREE.CylinderGeometry(mm(6), mm(6), mm(160), 16), mMetal);
   bar.position.set(mm(hx), mm(DOOR_H / 2), mm(TH + 28)); bar.castShadow = true; pivot.add(bar);
   [-64, 64].forEach(o => { const s = new THREE.Mesh(new THREE.CylinderGeometry(mm(4), mm(4), mm(28), 10), mMetal);
@@ -1382,59 +1378,78 @@ function goebekDoor(leftHinge) {
   return pivot;
 }
 
+function hangingSection(w, sx, k) {
+  box(w, sx, Z_YUK_ALT, -DY, IWA, T, DY, mInner);
+  box(w, sx, Z_RAF, -DY, IWA, T, DY, mInner);
+  box(w, sx, Z_ALT, -DY, DOL, 780, DY - DOLG, mInner);
+  box(w, sx + IWA - DOL, Z_ALT, -DY, DOL, 780, DY - DOLG, mInner);
+  const rod = new THREE.Mesh(new THREE.CylinderGeometry(mm(12), mm(12), mm(IWA - 2), 20), mMetal);
+  rod.rotation.z = Math.PI / 2; rod.position.set(mm(sx + IWA / 2), mm(ROD), mm(-DY / 2)); rod.castShadow = true; w.add(rod);
+  const cloth = [0x6f7f8f, 0xd9d2c3, 0x8a6f5a, 0x3f4a55, 0xb7a58d, 0xe8e2d6, 0x5b6b5d];
+  for (let i = 0; i < 6; i++) {
+    const cx = sx + 110 + i * ((IWA - 220) / 5) + (k ? 25 : 0);
+    const hh = 760 + ((i * 37 + k * 53) % 180);
+    box(w, cx - 20, ROD - 60 - hh, -DY / 2 - 210, 40, hh, 420, M(cloth[(i + k * 3) % cloth.length], { roughness: 1 }), false);
+  }
+  const gzs = (780 - 120) / 4, slots = [];
+  for (let i = 0; i < 4; i++) slots.push([Z_ALT + i * gzs, 130]);
+  slots.push([Z_RAF - 120, 80]);
+  slots.forEach(([lo, bh], si) => {
+    const g = new THREE.Group(); w.add(g);
+    const bx = sx + DOL + R, z0 = -DOLG - GRAY, y0 = lo + 20;
+    box(g, bx, y0, z0, T, bh, GRAY, mInner);
+    box(g, bx + DBW - T, y0, z0, T, bh, GRAY, mInner);
+    box(g, bx + T, y0, -DOLG - T, DBW - 2 * T, bh, T, mBody);
+    box(g, bx + T, y0, z0, DBW - 2 * T, bh, T, mInner);
+    box(g, bx, y0 - 8, z0, DBW, 8, GRAY, mBack, false);
+    const hdl = new THREE.Mesh(new THREE.BoxGeometry(mm(160), mm(10), mm(14)), mMetal);
+    hdl.position.set(mm(bx + DBW / 2), mm(y0 + bh - 22), mm(-DOLG + 7)); g.add(hdl);
+    box(w, sx + DOL, y0 + bh / 2 - 22, -DOLG - GRAY, R, 45, GRAY, mRail, false);
+    box(w, sx + IWA - DOL - R, y0 + bh / 2 - 22, -DOLG - GRAY, R, 45, GRAY, mRail, false);
+    drawers.push({ g, max: mm(400), d: si, w: true });
+  });
+}
+
+function shelfSection(w, sx) {
+  box(w, sx, Z_YUK_ALT, -DY, IWB, T, DY, mInner);                       // sabit raf (yüklük hizası)
+  const step = (Z_YUK_ALT - Z_ALT) / 6;
+  const fold = [0xd9d2c3, 0x8a9aa8, 0xb7a58d, 0xe8e2d6, 0x6f7f8f, 0xc9b9a4];
+  for (let k = 1; k <= 5; k++) {
+    const y = Z_ALT + k * step - T / 2;
+    box(w, sx + 1, y, -DY, IWB - 2, T, DY - 20, mInner);                 // hareketli raf
+    const n = 1 + (k % 2);                                               // katlanmış giysi yığınları
+    for (let j = 0; j < n; j++)
+      box(w, sx + 30 + j * 190, y + T, -DY + 80, 170, 70 + (k * 23 % 60), 300, M(fold[(k + j) % fold.length], { roughness: 1 }), false);
+  }
+}
+
 function wardrobe(parent) {
   const w = new THREE.Group(); parent.add(w);
+  const sA = T, sB = 2 * T + IWA, sC = 3 * T + IWA + IWB;
   box(w, 0, 0, -DY, T, H, DY);
   box(w, W - T, 0, -DY, T, H, DY);
   box(w, T, H - T, -DY, W - 2 * T, T, DY);
   box(w, T, B, -DY, W - 2 * T, T, DY);
   box(w, T, 0, -T, W - 2 * T, B, T);
   box(w, T, 0, -DY, W - 2 * T, B, T);
-  box(w, T + IW, B + T, -DY, T, H - B - 2 * T, DY);
+  box(w, sA + IWA, B + T, -DY, T, H - B - 2 * T, DY);                    // orta dikme 1
+  box(w, sB + IWB, B + T, -DY, T, H - B - 2 * T, DY);                    // orta dikme 2
   box(w, 0, 0, -D, W, H, AT, mBack, false);
-  for (let k = 0; k < 2; k++) {
-    const sx = T + k * (IW + T);
-    box(w, sx, Z_YUK_ALT, -DY, IW, T, DY, mInner);
-    box(w, sx, Z_RAF, -DY, IW, T, DY, mInner);
-    box(w, sx, Z_ALT, -DY, DOL, 780, DY - DOLG, mInner);
-    box(w, sx + IW - DOL, Z_ALT, -DY, DOL, 780, DY - DOLG, mInner);
-    const rod = new THREE.Mesh(new THREE.CylinderGeometry(mm(12), mm(12), mm(IW - 2), 20), mMetal);
-    rod.rotation.z = Math.PI / 2; rod.position.set(mm(sx + IW / 2), mm(ROD), mm(-DY / 2)); rod.castShadow = true; w.add(rod);
-    // askıda birkaç giysi
-    const cloth = [0x6f7f8f, 0xd9d2c3, 0x8a6f5a, 0x3f4a55, 0xb7a58d, 0xe8e2d6, 0x5b6b5d];
-    for (let i = 0; i < 7; i++) {
-      const cx = sx + 120 + i * ((IW - 240) / 6) + (k ? 30 : 0);
-      const hh = 760 + ((i * 37 + k * 53) % 180);
-      box(w, cx - 20, ROD - 60 - hh, -DY / 2 - 210, 40, hh, 420, M(cloth[(i + k * 3) % cloth.length], { roughness: 1 }), false);
-    }
-    const slots = [];
-    const gzs = (780 - 120) / 4;
-    for (let i = 0; i < 4; i++) slots.push([Z_ALT + i * gzs, 130]);
-    slots.push([Z_RAF - 120, 80]);
-    slots.forEach(([lo, bh]) => {
-      const g = new THREE.Group(); w.add(g);
-      const bx = sx + DOL + R, z0 = -DOLG - GRAY, y0 = lo + 20;
-      box(g, bx, y0, z0, T, bh, GRAY, mInner);
-      box(g, bx + DBW - T, y0, z0, T, bh, GRAY, mInner);
-      box(g, bx + T, y0, -DOLG - T, DBW - 2 * T, bh, T, mBody);
-      box(g, bx + T, y0, z0, DBW - 2 * T, bh, T, mInner);
-      box(g, bx, y0 - 8, z0, DBW, 8, GRAY, mBack, false);
-      const hdl = new THREE.Mesh(new THREE.BoxGeometry(mm(160), mm(10), mm(14)), mMetal);
-      hdl.position.set(mm(bx + DBW / 2), mm(y0 + bh - 22), mm(-DOLG + 7)); g.add(hdl);
-      box(w, sx + DOL, y0 + bh / 2 - 22, -DOLG - GRAY, R, 45, GRAY, mRail, false);
-      box(w, sx + IW - DOL - R, y0 + bh / 2 - 22, -DOLG - GRAY, R, 45, GRAY, mRail, false);
-      drawers.push({ g, max: mm(400), d: drawers.length % 5, w: true });
-    });
-  }
-  for (let i = 0; i < 4; i++) {
-    const left = i % 2 === 0;
-    const p = goebekDoor(left);
+  hangingSection(w, sA, 0);
+  shelfSection(w, sB);
+  hangingSection(w, sC, 1);
+  // K1 sol yanda, K2 ve K3 orta dikme 1'de, K4 orta dikme 2'de, K5 sağ yanda menteşeli
+  const hingeLeft = [true, false, true, true, false];
+  for (let i = 0; i < NK; i++) {
+    const left = hingeLeft[i];
+    const p = flatDoor(left);
     const x0 = i * (DOOR_W + G);
     p.position.set(mm(left ? x0 : x0 + DOOR_W), mm(B + G / 2), 0);
     w.add(p);
-    // ortadaki kapaklar (K2, K3) yan bölmenin önüne geçmesin diye 90°'de durur
-    const mid = i === 1 || i === 2;
-    doors.push({ p, sign: left ? -1 : 1, max: mid ? 90 : 105, bx: p.position.x, dx: mid ? mm(left ? -1.5 : 1.5) : 0 });
+    // orta dikmelerdeki kapaklar yan bölmenin önüne geçmesin diye 90°'de durur
+    const mid = i >= 1 && i <= 3;
+    const dx = i === 1 ? mm(1.5) : i === 2 ? mm(-1.5) : 0;               // K2 ile K3 aynı dikmede buluşur
+    doors.push({ p, sign: left ? -1 : 1, max: mid ? 90 : 105, bx: p.position.x, dx });
   }
   return w;
 }
