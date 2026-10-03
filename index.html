@@ -1201,6 +1201,7 @@ const mThrow = M(0x9c8c76, { roughness: 1 }), mRug = M(0xb2a99b, { roughness: 1 
 const mGlass = M(0xcfe3f1, { roughness: 0.1, metalness: 0, emissive: 0x9fbfda, emissiveIntensity: 0.35, transparent: true, opacity: 0.85 });
 const mShade = M(0xf3ead8, { roughness: 0.9, emissive: 0xffd9a0, emissiveIntensity: 0.0, side: THREE.DoubleSide });
 const mWood = M(0x8a6a4c, { roughness: 0.7 }), mArt = M(0xb39f86, { roughness: 1 }), mArt2 = M(0x7f8c86, { roughness: 1 });
+const mSlot = M(0x3b3733, { roughness: 0.9 });
 const edgeMat = new THREE.LineBasicMaterial({ color: 0x7d776c, transparent: true, opacity: 0.32 });
 
 function box(parent, x0, y0, z0, w, h, d, mat = mBody, edges = true, shadow = true) {
@@ -1402,8 +1403,8 @@ function hangingSection(w, sx, k) {
     box(g, bx + T, y0, -DOLG - T, DBW - 2 * T, bh, T, mBody);
     box(g, bx + T, y0, z0, DBW - 2 * T, bh, T, mInner);
     box(g, bx, y0 - 8, z0, DBW, 8, GRAY, mBack, false);
-    const hdl = new THREE.Mesh(new THREE.BoxGeometry(mm(160), mm(10), mm(14)), mMetal);
-    hdl.position.set(mm(bx + DBW / 2), mm(y0 + bh - 22), mm(-DOLG + 7)); g.add(hdl);
+    // kulpsuz: ön panelin üst kenarında parmak oyuğu
+    box(g, bx + DBW / 2 - 60, y0 + bh - 30, -DOLG - 3, 120, 22, 4, mSlot, false, false);
     box(w, sx + DOL, y0 + bh / 2 - 22, -DOLG - GRAY, R, 45, GRAY, mRail, false);
     box(w, sx + IWA - DOL - R, y0 + bh / 2 - 22, -DOLG - GRAY, R, 45, GRAY, mRail, false);
     drawers.push({ g, max: mm(400), d: si, w: true });
